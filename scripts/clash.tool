@@ -63,10 +63,20 @@ keep_dns() {
 
 subscription() {
     if [ "${auto_subscription}" = "true" ] ; then
+        if [ "${local_subconverter}" = "true" ] ; then
+            nohup ${subconverter_path} > /dev/null 2>&1 &
+            sleep 2
+        fi
         mv -f ${Clash_config_file} ${Clash_data_dir}/config.yaml.backup
         curl -L -A 'clash' ${subscription_url} -o ${Clash_config_file} >> /dev/null 2>&1
         
-        if [ -f "${Clash_config_file}" ]; then
+        if [ "${local_subconverter}" = "true" ] ; then
+            killall subconverter
+        fi
+        
+        filesize=`ls -l ${Clash_config_file} | awk '{ print $5 }'`
+        minsize=$((1024*1))
+        if [ ${filesize} -gt ${minsize} ]; then
             ${scripts_dir}/clash.service -k && ${scripts_dir}/clash.tproxy -k
             rm -rf ${Clash_data_dir}/config.yaml.backup
             sleep 1
@@ -83,6 +93,8 @@ subscription() {
     else
         exit 0
     fi
+    unset filesize
+    unset minsize
 }
 
 find_packages_uid() {
