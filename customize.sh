@@ -38,6 +38,7 @@ esac
 
 mkdir -p ${MODPATH}/system/bin
 mkdir -p ${clash_data_dir}
+mkdir -p ${clash_data_dir}/yacd-gh-pages
 if [ "${status}" = "false" ] ; then
     mkdir -p ${MODPATH}${ca_path}
 fi
@@ -68,7 +69,13 @@ else
     rm -rf ${MODPATH}/system/bin/curl
     rm -rf ${MODPATH}/cacert.pem
 fi
+
+mv ${MODPATH}/Country.mmdb ${clash_data_dir}/
+unzip -o ${MODPATH}/yacd-gh-pages.zip -d ${clash_data_dir}/yacd-gh-pages >&2
+
 rm -rf ${MODPATH}/binary
+rm -f ${MODPATH}/Country.mmdb
+rm -f ${MODPATH}/yacd-gh-pages.zip
 
 if [ ! -f "${clash_data_dir}/packages.list" ] ; then
     touch ${clash_data_dir}/packages.list
@@ -89,6 +96,8 @@ fi
 
 set_perm_recursive ${MODPATH}/scripts ${system_uid} ${system_gid} 0755 0755
 set_perm_recursive ${clash_data_dir} ${system_uid} ${system_gid} 0755 0644
+set_perm_recursive ${clash_data_dir}/yacd-gh-pages ${system_uid} ${system_gid} 0755 0644
 set_perm  ${MODPATH}/system/bin/clash  ${system_uid}  ${system_gid}  6755
 set_perm  ${clash_data_dir}/clash.config ${system_uid} ${system_gid} 0755
+set_perm  ${clash_data_dir}/Country.mmdb ${system_uid} ${system_gid} 0644
 set_perm  ${clash_data_dir}/packages.list ${system_uid} ${system_gid} 0644
