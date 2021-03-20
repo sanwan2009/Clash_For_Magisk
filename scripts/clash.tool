@@ -65,9 +65,7 @@ subscription() {
     if [ "${auto_subscription}" = "true" ] ; then
         mv -f ${Clash_config_file} ${Clash_data_dir}/config.yaml.backup
         curl -L -A 'clash' ${subscription_url} -o ${Clash_config_file} >> /dev/null 2>&1
-
-        sleep 20
-
+        
         if [ -f "${Clash_config_file}" ]; then
             ${scripts_dir}/clash.service -k && ${scripts_dir}/clash.tproxy -k
             rm -rf ${Clash_data_dir}/config.yaml.backup
