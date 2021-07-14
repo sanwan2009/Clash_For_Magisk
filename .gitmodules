@@ -1,3 +1,6 @@
 [submodule "Yet Another Clash Dashboard"]
 	path = yacd-gh-pages
 	url = https://github.com/haishanh/yacd.git
+[submodule "clash"]
+	path = clash
+	url = https://github.com/ClashDotNetFramework/experimental-clash
