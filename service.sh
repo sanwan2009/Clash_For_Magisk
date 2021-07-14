@@ -13,6 +13,7 @@ if [ -f ${Clash_pid_file} ] ; then
     rm -f ${Clash_pid_file}
 fi
 
+export TZ=Asia/Shanghai
 crond -c ${Clash_run_path} > /dev/null 2>&1 &
 
 ${scripts_dir}/clash.service -s && ${scripts_dir}/clash.tproxy -s
