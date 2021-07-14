@@ -45,7 +45,6 @@ start_clash() {
         chmod 0644 ${temporary_config_file}
         setcap 'cap_net_admin,cap_net_raw+ep' ${Clash_bin_path}
 
-        ${busybox_path} crontab -c ${Clash_run_path} -r
         touch ${Clash_run_path}/root
         chmod 0600 ${Clash_run_path}/root
 
