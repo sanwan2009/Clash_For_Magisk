@@ -19,7 +19,7 @@ start_clash() {
     fi
 
     pid=`cat ${Clash_pid_file} 2> /dev/null`
-    if (cat /proc/${pid}/cmdline | grep -q clash) ; then
+    if (cat /proc/${pid}/cmdline | grep -q ${Clash_bin_name}) ; then
         echo "info: 检测到clash已启动,此次不启动." >> ${CFM_logs_file}
         exit 1
     fi
@@ -64,19 +64,26 @@ start_clash() {
         exit 1
     fi
 
-    if [ -f ${temporary_config_file} ] && [ -f ${Clash_geoip_file} ] ; then
-        if $(${Clash_bin_path} -d ${Clash_data_dir} -t -f ${temporary_config_file} > /dev/null) ; then
+    if [ -f ${temporary_config_file} ] ; then
+        ${Clash_bin_path} -d ${Clash_data_dir} -t -f ${temporary_config_file} > ${Clash_run_path}/test
+        if [ "$?" = "0" ] ; then    
             nohup ${Clash_bin_path} -d ${Clash_data_dir} -f ${temporary_config_file} > /dev/null 2>&1 &
             echo -n $! > ${Clash_pid_file}
             echo "info: clash内核已启动." >> ${CFM_logs_file}
+            chmod 644 ${Clash_pid_file}
+            rm -f ${Clash_run_path}/test
+        else
+            echo "err: 配置文件检查不通过！查看test文件获取具体原因." >> ${CFM_logs_file}
+            exit 1
         fi
+    else
+        echo "err: 配置文件不存在！" >> ${CFM_logs_file}
+        exit 1
     fi
-
-    sleep 3
 
     if ! (${scripts_dir}/clash.tool -p) ; then
         kill -15 `cat ${Clash_pid_file}`
-        rm -rf ${Clash_pid_file}
+        rm -f ${Clash_pid_file}
         echo "err: 端口未检测到,已停止clash内核以及后续逻辑." >> ${CFM_logs_file}
         exit 1
     fi
@@ -84,7 +91,7 @@ start_clash() {
 
 stop_clash() {
     kill -15 `cat ${Clash_pid_file}`
-    rm -rf ${Clash_pid_file}
+    rm -f ${Clash_pid_file}
     echo "info: 停止clash内核." >> ${CFM_logs_file}
 }
 
