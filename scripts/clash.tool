@@ -1,4 +1,5 @@
-#!/system/bin/sh
+#!/sbin/sh
+ASH_STANDALONE=1
 
 scripts=`realpath $0`
 scripts_dir=`dirname ${scripts}`
@@ -64,19 +65,17 @@ keep_dns() {
 subscription() {
     if [ "${auto_subscription}" = "true" ] ; then
         mv -f ${Clash_config_file} ${Clash_data_dir}/config.yaml.backup
-        curl -L -A 'clash' ${subscription_url} -o ${Clash_config_file} >> /dev/null 2>&1
+        wget -q -U clash ${subscription_url} -O ${Clash_config_file} >> /dev/null 2>&1
 
-        sleep 20
-
-        if [ -f "${Clash_config_file}" ]; then
-            ${scripts_dir}/clash.service -k && ${scripts_dir}/clash.tproxy -k
-            rm -rf ${Clash_data_dir}/config.yaml.backup
-            sleep 1
-            ${scripts_dir}/clash.service -s && ${scripts_dir}/clash.tproxy -s
+        if [ "$?" = "0" ] && [ -f "${Clash_config_file}" ] ; then
+            cat ${template_file} > ${temporary_config_file} && echo '\n' >> ${temporary_config_file}
+            sed -n -E '/^proxies:$/,$p' ${Clash_config_file} >> ${temporary_config_file}
+            curl -X PUT -H "Content-Type: application/json" -d '{"path": "/data/Clash/run/config.yaml"}' http://127.0.0.1:`grep "external-controller:" ${template_file} | awk -F ':' '{print $3}'`/configs
             if [ "$?" = "0" ] ; then
-                echo "info: 订阅更新成功,CFM已成功重启." >> ${CFM_logs_file}
+                echo "info: 订阅更新成功,配置文件成功重载." >> ${CFM_logs_file}
+                rm -f ${Clash_data_dir}/config.yaml.backup
             else
-                echo "err: 订阅更新成功,CFM重启失败." >> ${CFM_logs_file}
+                echo "err: 订阅更新成功,配置文件重载失败." >> ${CFM_logs_file}
             fi
         else
             mv ${Clash_data_dir}/config.yaml.backup ${Clash_config_file}
