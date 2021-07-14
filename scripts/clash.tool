@@ -63,20 +63,12 @@ keep_dns() {
 
 subscription() {
     if [ "${auto_subscription}" = "true" ] ; then
-        if [ "${local_subconverter}" = "true" ] ; then
-            nohup ${subconverter_path} > /dev/null 2>&1 &
-            sleep 2
-        fi
         mv -f ${Clash_config_file} ${Clash_data_dir}/config.yaml.backup
         curl -L -A 'clash' ${subscription_url} -o ${Clash_config_file} >> /dev/null 2>&1
-        
-        if [ "${local_subconverter}" = "true" ] ; then
-            killall subconverter
-        fi
-        
-        filesize=`ls -l ${Clash_config_file} | awk '{ print $5 }'`
-        minsize=$((1024*1))
-        if [ ${filesize} -gt ${minsize} ]; then
+
+        sleep 20
+
+        if [ -f "${Clash_config_file}" ]; then
             ${scripts_dir}/clash.service -k && ${scripts_dir}/clash.tproxy -k
             rm -rf ${Clash_data_dir}/config.yaml.backup
             sleep 1
@@ -93,8 +85,6 @@ subscription() {
     else
         exit 0
     fi
-    unset filesize
-    unset minsize
 }
 
 find_packages_uid() {
@@ -111,10 +101,17 @@ find_packages_uid() {
 
 port_detection() {
     clash_pid=`cat ${Clash_pid_file}`
-    clash_port=$(ss -antup | grep "clash" | awk '$7~/'pid="${clash_pid}"*'/{print $5}' | awk -F ':' '{print $2}' | sort -u)
     match_count=0
+
+    if ! (ss -h > /dev/null 2>&1) ; then
+        clash_port=$(netstat -anlp | grep -v p6 | grep "clash" | awk '$6~/'"${clash_pid}"*'/{print $4}' | awk -F ':' '{print $2}' | sort -u)
+    else
+        clash_port=$(ss -antup | grep "clash" | awk '$7~/'pid="${clash_pid}"*'/{print $5}' | awk -F ':' '{print $2}' | sort -u)
+    fi
+
     for sub_port in ${clash_port[*]} ; do
         sleep 0.5
+        echo "info:检测到端口:${sub_port}" >> ${CFM_logs_file}
         if [ "${sub_port}" = ${Clash_tproxy_port} ] || [ "${sub_port}" = ${Clash_dns_port} ] ; then
             match_count=$((${match_count} + 1))
         fi

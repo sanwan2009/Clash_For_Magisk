@@ -78,7 +78,7 @@ external-ui: yacd-gh-pages
 # This section is optional. When not present, the DNS server will be disabled.
 dns:
     enable: true
-    listen: 0.0.0.0:1053
+    listen: 127.0.0.1:1053
     ipv6: false # when the false, response to AAAA questions will be empty
     enhanced-mode: redir-host # or fake-ip Note: Fake-ip mode needs to delete ‘198.18.0.0/15 ’ in the clash.config file.
     # fake-ip-range: 198.18.0.1/16 # Fake IP addresses pool CIDR
