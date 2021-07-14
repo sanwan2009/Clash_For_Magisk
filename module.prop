@@ -1,6 +1,6 @@
 id=Clash_For_Magisk
 name=Clash For Magisk
-version=v1.4.2
-versionCode=20210206
+version=v1.6.9
+versionCode=20210714
 author=kalasutra
-description=利用tproxy支持Clash的透明代理.
+description=利用tproxy支持Clash的透明代理.Clash内核为https://github.com/ClashDotNetFramework/experimental-clash版本以期支持providers.
