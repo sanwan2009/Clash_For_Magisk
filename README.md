@@ -8,7 +8,7 @@
 
 * 由于[kalasutra](https://github.com/kalasutra)写了两个版本的`clash magisk模块`,[cpfm](https://github.com/CHIZI-0618/Clash_For_Magisk/tree/master)和[cfm](https://github.com/kalasutra/Clash_For_Magisk)以及[Kr328](https://github.com/Kr328)的[cfm](https://github.com/Kr328/ClashForMagisk)的存在已导致版本混乱,Kr328的cfm也是Magisk官方模块仓库的版本,需注意你所下载的版本是否是你需要的版本.
 
-* 现阶段存在两个版本的Dashborad,[Jkkoi/DashBoard](https://github.com/Jkkoi/DashBoard)需配合此仓库的cfm使用,[Dashboard2/Dashboard](https://github.com/Dashboard2/Dashboard)需配合cpfm或者Kr328的cfm使用.
+* 现阶段存在两个版本的Dashborad,[Jkkoi/DashBoard](https://github.com/LikeJson/DashBoard)需配合此仓库的cfm使用,[Dashboard2/Dashboard](https://github.com/Dashboard2/Dashboard)需配合cpfm或者Kr328的cfm使用.
 
 * 不能承诺每次更新都不会出问题,包括不限于无法使用,**请考虑好再选择是否更新**,或加入telegram群进行讨论,telegram群组[Dashboard 闲聊吹水[NSFJB]](https://t.me/blowH2O).
 
@@ -32,7 +32,7 @@
 
 * `config.yaml` - 用户clash配置文件,注意: 实际使用时,会在`/data/clash/run`文件夹下生成模块clash配置文件，其中`从第一行到proxies:的前一行`使用的是`template`文件的内容.
 
-* `Country.mmdb` - geoip文件,clash需要.
+* `Country.mmdb` - geoip文件,clash需要.如果缺失,clash启动过程中会自动下载.
 
 * `packages.list` - 黑白名单过滤列表,填包名.
 
@@ -43,10 +43,6 @@
 * `mode` -可选值: 黑名单- `blacklist`,白名单- `whitelist`,仅启动内核- `core`.功能: 选择启动模式.
 
 * `auto_subscription` -可选值: `false`, `true`.功能: 自动订阅开关.
-
-* `local_subconverter` -可选值: `false`, `true`.功能: 更新订阅是否使用本地subconverter后端,需配置subconverter可执行文件路径.
-
-* `subconverter_path` -subconverter可执行文件路径,[参考](https://github.com/CHIZI-0618/Clash_For_Magisk/blob/main/clash.config#L22) .
 
 * `update_interval` - 参考[crond](https://www.runoob.com/w3cnote/linux-crontab-tasks.html)教程.
 
