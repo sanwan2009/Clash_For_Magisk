@@ -34,10 +34,14 @@ if [ ! -f "${clash_data_dir}/packages.list" ] ; then
     touch ${clash_data_dir}/packages.list
 fi
 
-sleep 1
+mv -f $MODPATH/yacd-gh-pages ${clash_data_dir}/
+ui_print "- 安装本地 Yet Another Clash Dashboard."
+
+sleep 2
 
 ui_print "- 开始设置环境权限."
 set_perm_recursive ${MODPATH} 0 0 0755 0644
 set_perm_recursive ${MODPATH}/system/bin 0 0 0755 0755
 set_perm_recursive ${MODPATH}/scripts 0 0 0755 0755
 set_perm_recursive ${clash_data_dir} 0 0 0755 0644
+set_perm  ${clash_data_dir}/clash.config 0 0 0755
