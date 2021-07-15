@@ -5,7 +5,7 @@ scripts_dir=`dirname ${scripts}`
 . /data/clash/clash.config
 
 start_clash() {
-
+    local ipv6=`grep -wq "ipv6: true" ${template_file} && echo "true"||echo "false"`
     if [ "${ipv6}" = "false" ] ; then
         for net in /proc/sys/net/ipv6/conf/* ; do
             echo 0 > ${net}/accept_ra
@@ -18,7 +18,7 @@ start_clash() {
         done
     fi
 
-    pid=`cat ${Clash_pid_file} 2> /dev/null`
+    local pid=`cat ${Clash_pid_file} 2> /dev/null`
     if (cat /proc/${pid}/cmdline | grep -q ${Clash_bin_name}) ; then
         echo "info: 检测到clash已启动,此次不启动." >> ${CFM_logs_file}
         exit 1
