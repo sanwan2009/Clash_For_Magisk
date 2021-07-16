@@ -6,14 +6,21 @@ scripts_dir=`dirname ${scripts}`
 
 start_clash() {
     local ipv6=`grep -wq "ipv6: true" ${template_file} && echo "true"||echo "false"`
+
     if [ "${ipv6}" = "false" ] ; then
-        for net in /proc/sys/net/ipv6/conf/* ; do
-            echo 0 > ${net}/accept_ra
+        for net in /proc/sys/net/ipv6/conf/{wlan*,*data*} ; do
+            echo ${net} | grep -q wlan
+            if [ $? -eq 0 ] ; then
+                echo 0 > ${net}/accept_ra
+            fi
             echo 1 > ${net}/disable_ipv6
         done
     else
-        for net in /proc/sys/net/ipv6/conf/* ; do
-            echo 1 > ${net}/accept_ra
+        for net in /proc/sys/net/ipv6/conf/{wlan*,*data*} ; do
+            echo ${net} | grep -q wlan
+            if [ $? -eq 0 ] ; then
+                echo 1 > ${net}/accept_ra
+            fi
             echo 0 > ${net}/disable_ipv6
         done
     fi
